@@ -107,16 +107,15 @@ def getF(n,r):#用于生成题目和答案列表
         ans=num1[0]
         for y in range(i):
             cal=calculate(ans,num[y+1],slist[y])
-            if cal>=0:#判断算式是否合法
+            if cal>=0:
                 ans=cal
             else:
                 legal=False
                 break
-        if legal:#判断是否重复题目
+        if legal:#判断算式是否合法
             try:
-                num=A.index(ans)#第一个重复答案的索引
-                if operator.eq(E1[num],slist) and operator.eq(E2[num],num):
-                    pass
+                num=A.index(ans)#第一个答案的索引
+
             except ValueError as e:#可以写入
                 A.append(ans)
                 E1.append(slist)
