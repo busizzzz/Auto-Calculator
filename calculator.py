@@ -11,22 +11,20 @@ start =time.clock()#用于计算运行时间
 def get_num_sym(i,r):#获取数值列表和符号列表
     nlist=[]#数值列表
     slist=[]#符号列表
-    hsb=0#判断怎么加括号
+    hb=0#判断怎么加括号
     l=0#判断是否是减数运算
-    i=random.randint(1, 3)#随机获取符号数目
     for m in range(i+1):#根据i的值遍历输出数值列表
-        nlist.append(Fraction(random.randint(1, r), random.randint(1, r)))
-    return nlist    
+        nlist.append(Fraction(random.randint(1, r), random.randint(1, r)))  
     for x in range(i):
         sy=random.choice(['+','-','×','÷'])
         if sy=='+'or sy=='-':
-            hsb +=10**(i-x-1)
+            hb +=10**(i-x-1)
         else :
-            hsb += 2 * (10 ** (i - x - 1))
+            hb += 2 * (10 ** (i - x - 1))
         slist.append(sy)
         if sy=='-':
             l=1
-    return slist,nlist,hsb,i,l
+    return nlist,slist,hb,i,l
 
 def f(f):#分数的表达
     a=f.numerator
@@ -40,7 +38,7 @@ def f(f):#分数的表达
         a = a - c * b
         return '%d%s%d%s%d' % (c,'’',a,'/',b)
    
-def calculate(a,b,s):#计算单元，a，b是数，c是符号
+def calculate(a,b,s):#计算单元，a，b是数，s是符号
     ans=0
     if s=='+':#加法运算
         ans=a+b
@@ -52,10 +50,10 @@ def calculate(a,b,s):#计算单元，a，b是数，c是符号
     else:ans=a/b#除法运算
     return ans
 
-def writeF(slist,num,hsb):#生成算术表达式
+def writeF(slist,num,hb):#生成算术表达式
     global j,k
     s=''
-    if hsb>100:#符号数为3
+    if hb>100:#符号数为3
         if j==1 and k==0:
             s = '%s %s (%s %s %s) %s %s = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
@@ -65,20 +63,20 @@ def writeF(slist,num,hsb):#生成算术表达式
         elif j==0 and k==1:
             s = '%s %s (%s %s %s %s %s) = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
-        if hsb == 112 or hsb ==212:          
+        if hb == 112 or hb ==212:          
             s = '(%s %s %s %s %s) %s %s = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
-        elif hsb == 121 or hsb ==122:
+        elif hb == 121 or hb ==122:
             s = '(%s %s %s) %s %s %s %s = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
         else:
             s = '%s %s %s %s %s %s %s = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
-    elif hsb>10:#符号数为2
+    elif hb>10:#符号数为2
         if j==1 :
             s = '%s %s (%s %s %s) = ' % (f(num[0]), slist[0],
             f(num[1]), slist[1], f(num[2]))
-        if hsb == 12:
+        if hb == 12:
             s = '(%s %s %s)%s %s = ' % (f(num[0]), slist[0],
             f(num[1]), slist[1], f(num[2]))
         else:
@@ -93,7 +91,8 @@ def getF(n,r):#用于生成题目和答案列表
     global j,k
     x=1
     while x<n+1:#循环生成题目和答案列表
-        slist,num,hsb,i,l=get_num_sym()
+        i=random.randint(1, 3)#随机获取符号数目
+        num,slist,hb,i,l=get_num_sym(i,r)
         num1=num
         legal = True
         if l==1: #用于防止除法运算出现负数           
@@ -122,7 +121,7 @@ def getF(n,r):#用于生成题目和答案列表
                 A.append(ans)
                 E1.append(slist)
                 E2.append(num1)
-                E.append('%d. %s'%(x,writeF(slist,num1,hsb)))
+                E.append('%d. %s'%(x,writeF(slist,num1,hb)))
                 x+=1
         else:pass
     return E,A
