@@ -161,51 +161,9 @@ def save(fname, data):#fname为写入文件的路径，data为要写入的数据
     file.close()
     print('%s文件保存成功'%fname)
 
-def a_read(fname):
-    file = open(fname)
-    read = file.readlines()
-    ans=[]
-    for line in read:
-        line = re.sub(r'\n', ' ', line)
-        ans.append(line.split(' ')[1])#字符串
-    return ans
 
-def e_read(fname):
-    file = open(fname)
-    read = file.readlines()
-    ans2= []
-    for line in read:
-        line = re.sub(r'[\.\(\)\=\s]+', ' ', line)
-        line = line.strip()  # 除去左右的空格
-        line1 = line.split( )  # 空格分割单词
-        del line1[0]
-        sy,nu=[],[]
-        for x in range(len(line1)):
-            if x%2:
-                sy.append(line1[x])
-            else:nu.append(rf(line1[x]))
-        ans = nu[0]
-        for y in range(len(sy)):
-            ans = calculate(ans, nu[y + 1], sy[y])
-        ans2.append(ans)
-    return ans2
 
-def check(a,e,ra,re):
-    correct,wrong=[],[]
-    for x in range(len(ra)):
-        if operator.eq(ra[x],f(re[x])):
-            correct.append(x+1)
-        else:wrong.append(x+1)
 
-    file = open('Grade.txt', 'a')
-    file.seek(0)
-    file.truncate()  # 清空文件
-    x1='Correct:%d%s\n'%(len(correct),correct)
-    x2='Wrong:%d%s'%(len(wrong),wrong)
-    file.write(x1)
-    file.write(x2)
-    file.close()
-    print('比对成功，并且结果存入Grade.txt')
 
 
 
@@ -213,24 +171,19 @@ def main():
     parser = argparse.ArgumentParser(description="this is auto calculator")
     parser.add_argument('-n',help='控制生成题目的个数',type=int)
     parser.add_argument('-r',help='控制题目中数值（自然数、真分数和真分数分母）的范围',type=int)
-    parser.add_argument('-e',help='输入题目文件')
-    parser.add_argument('-a',help='输入答案文件')
     args = parser.parse_args()
     if args.n:
         n=args.n
         print('n值为%d'%n)
     if args.r:
         r=args.r
-        print('r值为%d'%n)
+        print('r值为%d'%r)
         E, A=getF(n,r)
         for x in range(n):
             A[x]='%d. %s'%(x+1,f(A[x]))
         save('Exercises.txt',E)
         save('Answers.txt',A)
-    if args.e and args.a:#输入-e和-a
-        A1=args.a
-        E1=args.e
-        check(A1,E1,a_read(A1), e_read(E1))
+
     end = time.clock()
     print('Running time: %s '%(end-start))
 
