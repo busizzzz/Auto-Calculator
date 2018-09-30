@@ -218,10 +218,10 @@ def main():
     args = parser.parse_args()
     if args.n:
         n=args.n
-        print('n值为%d:'%n)
+        print('n值为%d'%n)
     if args.r:
         r=args.r
-        print('r值为%d:'%n)
+        print('r值为%d'%n)
         E, A=getF(n,r)
         for x in range(n):
             A[x]='%d. %s'%(x+1,f(A[x]))
