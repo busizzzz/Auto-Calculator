@@ -1,28 +1,22 @@
 # -*- coding = 'utf-8 -*-
-
 import argparse
 import random
 import operator
-import re
 import time
 from fractions import Fraction
 
-j=0
-k=0
+j,k=0,0
+start =time.clock()#用于计算运行时间
 
-start =time.clock()
-
-def numlist(i,r):#获取数值列表
+def get_num_sym(i,r):#获取数值列表和符号列表
     nlist=[]#数值列表
-    for m in range(i+1):#根据i的值遍历输出数值列表
-        nlist.append(Fraction(random.randint(1, r), random.randint(1, r)))
-    return nlist
-
-def symlist():#获取符号列表
     slist=[]#符号列表
     hsb=0#判断怎么加括号
     l=0#判断是否是减数运算
     i=random.randint(1, 3)#随机获取符号数目
+    for m in range(i+1):#根据i的值遍历输出数值列表
+        nlist.append(Fraction(random.randint(1, r), random.randint(1, r)))
+    return nlist    
     for x in range(i):
         sy=random.choice(['+','-','×','÷'])
         if sy=='+'or sy=='-':
@@ -32,9 +26,7 @@ def symlist():#获取符号列表
         slist.append(sy)
         if sy=='-':
             l=1
-    return slist,hsb,i,l
-
-
+    return slist,nlist,hsb,i,l
 
 def f(f):#分数的表达
     a=f.numerator
@@ -47,20 +39,7 @@ def f(f):#分数的表达
         c=int(a/b)
         a = a - c * b
         return '%d%s%d%s%d' % (c,'’',a,'/',b)
-
-    
-def rf(f):#分数转化为整数、真分数和假分数
-    line = re.sub(r'[\’\/]', ' ', f)
-    line1 = line.split(' ')  # 空格分割单词
-    line1 = [int(x) for x in line1]
-    i=len(line1)
-    if i==1:#为整数
-        return line1[0]
-    elif i==2:#为真分数
-        return Fraction(line1[0], line1[1])
-    else:#为假分数
-        return Fraction(line1[0]*line1[2]+line1[1], line1[2])
-    
+   
 def calculate(a,b,s):#计算单元，a，b是数，c是符号
     ans=0
     if s=='+':#加法运算
@@ -76,7 +55,7 @@ def calculate(a,b,s):#计算单元，a，b是数，c是符号
 def writeF(slist,num,hsb):#生成算术表达式
     global j,k
     s=''
-    if hsb>100:
+    if hsb>100:#符号数为3
         if j==1 and k==0:
             s = '%s %s (%s %s %s) %s %s = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
@@ -95,7 +74,7 @@ def writeF(slist,num,hsb):#生成算术表达式
         else:
             s = '%s %s %s %s %s %s %s = ' % (f(num[0]), slist[0],
             f(num[1]),slist[1], f(num[2]), slist[2], f(num[3]))
-    elif hsb>10:
+    elif hsb>10:#符号数为2
         if j==1 :
             s = '%s %s (%s %s %s) = ' % (f(num[0]), slist[0],
             f(num[1]), slist[1], f(num[2]))
@@ -105,20 +84,19 @@ def writeF(slist,num,hsb):#生成算术表达式
         else:
             s = '%s %s %s %s %s = ' % (f(num[0]), slist[0],
             f(num[1]), slist[1], f(num[2]))
-    else :
+    else :#符号数为1
         s ='%s %s %s = ' % (f(num[0]),slist[0],f(num[1]))
     return s
 
-def getF(n,r):#生成题目和答案列表
+def getF(n,r):#用于生成题目和答案列表
     E,A,E1,E2=[],[],[],[]
     global j,k
     x=1
-    while x<n+1:
-        slist,hsb,i,l=symlist()
-        num=numlist(i,r)
+    while x<n+1:#循环生成题目和答案列表
+        slist,num,hsb,i,l=get_num_sym()
         num1=num
         legal = True
-        if l==1:            
+        if l==1: #用于防止除法运算出现负数           
             if  num[0]<num[1]:
                 num1[0],num1[1]=num[1],num[0]
             if i>=2 and calculate(num[0],num[1],slist[0])<num[2]:
@@ -149,26 +127,20 @@ def getF(n,r):#生成题目和答案列表
         else:pass
     return E,A
 
-def save(fname, data):#fname为写入文件的路径，data为要写入的数据列表.
+def save(fname, d):#fname为写入文件的路径，d为要写入的数据列表.
     file = open(fname,'a')
     file.seek(0)
-    file.truncate() 
-    for i in range(len(data)):
-        s = str(data[i]).replace('[','').replace(']','')
+    file.truncate() #清空
+    for i in range(len(d)):#循环写入文件fname
+        s = str(d[i]).replace('[','').replace(']','')
         s = s.replace("'",'').replace(',','') +'\n'
         file.write(s)
                   
     file.close()
     print('%s文件保存成功'%fname)
 
-
-
-
-
-
-
-def main():
-    parser = argparse.ArgumentParser(description="this is auto calculator")
+def main():#主函数
+    parser = argparse.ArgumentParser(description="this is auto calculator")#命令行参数控制
     parser.add_argument('-n',help='控制生成题目的个数',type=int)
     parser.add_argument('-r',help='控制题目中数值（自然数、真分数和真分数分母）的范围',type=int)
     args = parser.parse_args()
@@ -179,14 +151,13 @@ def main():
         r=args.r
         print('r值为%d'%r)
         E, A=getF(n,r)
-        for x in range(n):
+        for x in range(n):#循环生成答案列表
             A[x]='%d. %s'%(x+1,f(A[x]))
         save('Exercises.txt',E)
         save('Answers.txt',A)
 
     end = time.clock()
-    print('Running time: %s '%(end-start))
-
+    print('运行时间: %s '%(end-start))
     
 if __name__ == '__main__':
     main()
