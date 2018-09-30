@@ -26,7 +26,7 @@ def get_num_sym(i,r):#获取数值列表和符号列表
             l=1
     return nlist,slist,hb,i,l
 
-def f(f):#分数的表达
+def f(f):#分数的转换
     a=f.numerator
     b=f.denominator
     if a%b==0:#为整数
@@ -136,7 +136,7 @@ def save(fname, d):#fname为写入文件的路径，d为要写入的数据列表
         file.write(s)
                   
     file.close()
-    print('%s文件保存成功'%fname)
+    print('%s文件以保存'%fname)
 
 def main():#主函数
     parser = argparse.ArgumentParser(description="this is auto calculator")#命令行参数控制
